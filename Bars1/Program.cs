@@ -9,8 +9,10 @@ namespace Bars1
         {
 
             Logger logger = new Logger();
-            logger.DebugFormat("Дебаг", 1, 3, 4, 5, 6);
-            
+            logger.Warning("Привет");
+            logger.Warning("Привет");
+
+
         }
     }
 }
