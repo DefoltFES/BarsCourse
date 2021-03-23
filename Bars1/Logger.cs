@@ -10,13 +10,20 @@ namespace Bars1
     class Logger : ILog
     {
         private static readonly string path = Path.Combine(@"logs", DateTime.Today.ToShortDateString());
+
         public void Debug(string message)
         {
             CheckOrCreateFolder();
             string debugPath = Path.Combine(path, "debug.txt");
             CheckOrCreateFile(debugPath);
+            WriteMessage(message, debugPath);
 
-            using (StreamWriter sw = new StreamWriter(debugPath))
+        }
+
+        private static void WriteMessage(string message, string debugPath)
+        {
+            FileStream Dic = new FileStream(debugPath, FileMode.Append);
+            using (StreamWriter sw = new StreamWriter(Dic))
             {
                 sw.Write(message);
             }
@@ -29,7 +36,8 @@ namespace Bars1
             CheckOrCreateFile(debugPath);
             using (StreamWriter sw = new StreamWriter(debugPath))
             {
-                sw.Write(message,e.StackTrace);
+                sw.WriteLine(message);
+                sw.WriteLine($"Stack {e.TargetSite}");
             }
         }
 
@@ -38,9 +46,20 @@ namespace Bars1
             CheckOrCreateFolder();
             string debugPath = Path.Combine(path, "debug.txt");
             CheckOrCreateFile(debugPath);
-            using (StreamWriter sw = new StreamWriter(debugPath))
+            WriteParams(message, args, debugPath);
+        }
+
+        private static void WriteParams(string message, object[] args, string debugPath)
+        {
+            FileStream Dic = new FileStream(debugPath, FileMode.Append);
+            using (StreamWriter sw = new StreamWriter(Dic))
             {
-                sw.Write(message, args);
+                sw.WriteLine(message);
+                foreach (var item in args)
+                {
+                    sw.Write(item + " ");
+                }
+                sw.WriteLine("");
             }
         }
 
@@ -49,10 +68,7 @@ namespace Bars1
             CheckOrCreateFolder();
             string debugPath = Path.Combine(path, "error.txt");
             CheckOrCreateFile(debugPath);
-            using (StreamWriter sw = new StreamWriter(debugPath))
-            {
-                sw.Write(message);
-            }
+            WriteMessage(message, debugPath);
         }
 
         public void Error(string message, Exception e)
@@ -62,7 +78,7 @@ namespace Bars1
             CheckOrCreateFile(debugPath);
             using (StreamWriter sw = new StreamWriter(debugPath))
             {
-                sw.Write(message,e.Message);
+                sw.Write(message, e.Message);
             }
         }
 
@@ -80,7 +96,7 @@ namespace Bars1
         public void ErrorUnique(string message, Exception e)
         {
             CheckOrCreateFolder();
-           
+
         }
 
         public void Fatal(string message)
@@ -124,7 +140,7 @@ namespace Bars1
             CheckOrCreateFile(infoPath);
             using (StreamWriter sw = new StreamWriter(infoPath))
             {
-                sw.Write(message,e.Data);
+                sw.Write(message, e.Data);
             }
         }
 
@@ -158,23 +174,22 @@ namespace Bars1
 
         public void WarningUnique(string message)
         {
-            CheckOrCreateFolder();
-            string warning = Path.Combine(path, "warning.txt");
-            CheckOrCreateFile(warning);
+            
         }
 
         private static void CheckOrCreateFile(string pathFile)
         {
+
             if (!File.Exists(pathFile))
-            {
-                File.Create(pathFile);
-            }
+                using (FileStream SourceStream = File.Open(pathFile, FileMode.Create)) ;
         }
 
         private static void CheckOrCreateFolder()
         {
+
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
+
         }
     }
 }
