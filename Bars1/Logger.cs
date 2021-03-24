@@ -25,11 +25,7 @@ namespace Bars1
             CheckOrCreateFolder();
             string debugPath = Path.Combine(path, "debug.txt");
             CheckOrCreateFile(debugPath);
-            using (StreamWriter sw = new StreamWriter(debugPath))
-            {
-                sw.WriteLine(message);
-                sw.WriteLine($"Stack {e.TargetSite}");
-            }
+            WriteMessageEx(message, debugPath, e);
         }
 
         public void DebugFormat(string message, params object[] args)
@@ -45,7 +41,7 @@ namespace Bars1
             CheckOrCreateFolder();
             string debugPath = Path.Combine(path, "error.txt");
             CheckOrCreateFile(debugPath);
-            
+            WriteMessage(message, debugPath);
         }
 
         public void Error(string message, Exception e)
@@ -53,10 +49,6 @@ namespace Bars1
             CheckOrCreateFolder();
             string debugPath = Path.Combine(path, "error.txt");
             CheckOrCreateFile(debugPath);
-            using (StreamWriter sw = new StreamWriter(debugPath))
-            {
-                sw.Write(message, e.Message);
-            }
             ErrorUnique(message,e);
         }
 
@@ -65,10 +57,7 @@ namespace Bars1
             CheckOrCreateFolder();
             string errorPath = Path.Combine(path, "error.txt");
             CheckOrCreateFile(errorPath);
-            using (StreamWriter sw = new StreamWriter(errorPath))
-            {
-                sw.Write(ex.Message);
-            }
+            WriteEx(ex, errorPath);
         }
 
         public void ErrorUnique(string message, Exception e)
@@ -87,30 +76,21 @@ namespace Bars1
             CheckOrCreateFolder();
             string fatalPath = Path.Combine(path, "fatal.txt");
             CheckOrCreateFile(fatalPath);
-            using (StreamWriter sw = new StreamWriter(fatalPath))
-            {
-                sw.Write(message);
-            }
+            WriteMessage(message, fatalPath);
         }
         public void Fatal(string message, Exception e)
         {
             CheckOrCreateFolder();
             string fatalPath = Path.Combine(path, "fatal.txt");
             CheckOrCreateFile(fatalPath);
-            using (StreamWriter sw = new StreamWriter(fatalPath))
-            {
-                sw.Write(message);
-            }
+            WriteMessageEx(message, fatalPath, e);
         }
         public void Info(string message)
         {
             CheckOrCreateFolder();
             string infoPath = Path.Combine(path, "info.txt");
             CheckOrCreateFile(infoPath);
-            using (StreamWriter sw = new StreamWriter(infoPath))
-            {
-                sw.Write(message);
-            }
+            WriteMessage(message, infoPath);
 
         }
         public void Info(string message, Exception e)
@@ -128,6 +108,7 @@ namespace Bars1
             CheckOrCreateFolder();
             string infoPath = Path.Combine(path, "info.txt");
             CheckOrCreateFile(infoPath);
+            WriteParams(message, args,infoPath);
         }
 
         public void SystemInfo(string message, Dictionary<object, object> properties = null)
@@ -136,6 +117,7 @@ namespace Bars1
             string systemInfo = Path.Combine(path, "systemInfo.txt");
             CheckOrCreateFile(systemInfo);
         }
+
         public void Warning(string message)
         {
             CheckOrCreateFolder();
@@ -149,7 +131,7 @@ namespace Bars1
             CheckOrCreateFolder();
             string warning = Path.Combine(path, "warning.txt");
             CheckOrCreateFile(warning);
-            
+            WriteMessageEx(message, warning, e);
         }
 
         public void WarningUnique(string message)
@@ -192,12 +174,31 @@ namespace Bars1
 
         }
 
-        private static void WriteMessage(string message, string debugPath)
+        private static void WriteMessage(string message, string path)
         {
-            FileStream Dic = new FileStream(debugPath, FileMode.Append);
+            FileStream Dic = new FileStream(path, FileMode.Append);
             using (StreamWriter sw = new StreamWriter(Dic))
             {
                 sw.Write(message);
+            }
+        }
+        private static void WriteMessageEx(string message, string path, Exception ex)
+        {
+            FileStream Dic = new FileStream(path, FileMode.Append);
+            using (StreamWriter sw = new StreamWriter(Dic))
+            {
+                sw.WriteLine(message);
+                sw.WriteLine(ex.Message);
+            }
+        }
+
+        private static void WriteEx(Exception ex,string path)
+        {
+            FileStream Dic = new FileStream(path, FileMode.Append);
+            using (StreamWriter sw = new StreamWriter(Dic))
+            {
+                sw.WriteLine(ex.Message);
+                sw.WriteLine(ex.StackTrace);
             }
         }
     }

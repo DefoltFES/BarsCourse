@@ -8,11 +8,9 @@ namespace Bars1
         static void Main(string[] args)
         {
 
-            Logger logger = new Logger();
-            logger.Warning("Привет");
-            logger.Warning("Привет");
-
 
         }
+
     }
 }
+
