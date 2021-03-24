@@ -116,6 +116,7 @@ namespace Bars1
             CheckOrCreateFolder();
             string systemInfo = Path.Combine(path, "systemInfo.txt");
             CheckOrCreateFile(systemInfo);
+            WriteDictionary(message, systemInfo, properties);
         }
 
         public void Warning(string message)
@@ -145,6 +146,19 @@ namespace Bars1
         }
 
 
+        public static void WriteDictionary(string message, string path, Dictionary<object, object> dictionary = null)
+        {
+            FileStream fileStream = new FileStream(path, FileMode.Append);
+            using (StreamWriter sw = new StreamWriter(fileStream))
+            {
+                sw.WriteLine(message);
+                foreach (var item in dictionary)
+                {
+                    sw.WriteLine(item + " ");
+                }
+                sw.WriteLine("");
+            }
+        }
         private static void WriteParams(string message, object[] args, string debugPath)
         {
             FileStream Dic = new FileStream(debugPath, FileMode.Append);
