@@ -7,17 +7,46 @@ using System.Threading.Tasks;
 
 namespace EventsBars
 {
-    class CalculatorSubsidy : ISubsidyCalculation
+    class CalculatorSubsidy : ISubsidyCalculation,IValidateSubsidia
     {
         public event EventHandler<string> OnNotify;
         public event EventHandler<Tuple<string, Exception>> OnException;
 
         public Charge CalculateSubsidy(Volume volumes, Tariff tariff)
         {
-            OnNotify(this, $"Расчет начат {DateTime.Today.ToShortTimeString()} d");
-            Charge charge = new Charge { ServiceId= volumes.HouseId,HouseId=volumes.HouseId,Month=volumes.Month,Value=volumes.Value*tariff.Value };
-            OnNotify(this, $"Расчет закончен {DateTime.Today.ToShortTimeString()}");
+            OnNotify(this,String.Empty);
+            Charge charge = new Charge { ServiceId = volumes.HouseId, HouseId = volumes.HouseId, Month = volumes.Month, Value = volumes.Value * tariff.Value };
+
+            OnNotify(this, String.Empty);
             return charge;
+        }
+
+        public bool ValidateVolumeAndTarrif(Volume volume, Tariff tariff)
+        {
+            if (volume.HouseId == tariff.HouseId & volume.ServiceId == tariff.ServiceId)
+            {
+                return true;
+            }
+            return false;
+            
+        }
+
+        public bool ValidateVolumeValue(Volume volume)
+        {
+            if (volume.Value < 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool ValidateTarifValue(Tariff tariff)
+        {
+            if (tariff.Value <= 0)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
