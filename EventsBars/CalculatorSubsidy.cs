@@ -14,10 +14,11 @@ namespace EventsBars
 
         public Charge CalculateSubsidy(Volume volumes, Tariff tariff)
         {
-            OnNotify(this,String.Empty);
+            string status = "Расчет началася";
+            OnNotify(this, status);
             Charge charge = new Charge { ServiceId = volumes.HouseId, HouseId = volumes.HouseId, Month = volumes.Month, Value = volumes.Value * tariff.Value };
-
-            OnNotify(this, String.Empty);
+            status = "Расчет закончен";
+            OnNotify(this, status);
             return charge;
         }
 

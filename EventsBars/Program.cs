@@ -23,19 +23,15 @@ namespace EventsBars
                 Value = 5
             };
             CalculatorSubsidy calc = new CalculatorSubsidy();
-            calc.OnNotify += Calc_OnNotify;
-            calc.OnNotify += Later;
+            calc.OnNotify += Notify;
             calc.CalculateSubsidy(volume,tariff);
            
         }
 
-        private static void Calc_OnNotify(object sender, string e)
+        private static void Notify(object sender, string e)
         {
-            Console.WriteLine($"Расчёт начат в  {DateTime.Now}");
+            Console.WriteLine(e+" "+DateTime.Now);
         }
-        private static void Later(object sender, string e)
-        {
-            Console.WriteLine($"Расчёт закончен в  {DateTime.Now}");
-        }
+       
     }
 }
