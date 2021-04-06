@@ -25,7 +25,7 @@ namespace EventsBars
             CalculatorSubsidy calc = new CalculatorSubsidy();
             calc.OnNotify += Notify;
             calc.CalculateSubsidy(volume,tariff);
-           
+            
         }
 
         private static void Notify(object sender, string e)

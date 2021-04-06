@@ -14,17 +14,33 @@ namespace EventsBars
 
         public Charge CalculateSubsidy(Volume volumes, Tariff tariff)
         {
-            string status = "Расчет началася";
-            OnNotify(this, status);
-            Charge charge = new Charge { ServiceId = volumes.HouseId, HouseId = volumes.HouseId, Month = volumes.Month, Value = volumes.Value * tariff.Value };
-            status = "Расчет закончен";
-            OnNotify(this, status);
+            Charge charge = null;
+            try
+            {
+               
+                OnNotifyCall("Расчет начат");
+                charge = new Charge { ServiceId = volumes.HouseId, HouseId = volumes.HouseId, Month = volumes.Month, Value = volumes.Value * tariff.Value };
+                OnNotifyCall("Расчет закончен");
+                return charge;           
+            }
+            catch(Exception ex)
+            {
+                var turple = new Tuple<string, Exception>("Ошибка", ex);
+                OnExceptionCall(turple);
+                throw;
+            }
+            finally
+            {
+                
+            }
             return charge;
+
         }
 
         public bool ValidateVolumeAndTarrif(Volume volume, Tariff tariff)
         {
-            if (volume.HouseId == tariff.HouseId & volume.ServiceId == tariff.ServiceId)
+
+            if (volume.HouseId == tariff.HouseId & volume.ServiceId == tariff.ServiceId &ValidateVolumeValue(volume)&ValidateTarifValue(tariff))
             {
                 return true;
             }
@@ -34,6 +50,7 @@ namespace EventsBars
 
         public bool ValidateVolumeValue(Volume volume)
         {
+
             if (volume.Value < 0)
             {
                 return false;
@@ -48,6 +65,24 @@ namespace EventsBars
                 return false;
             }
             return true;
+        }
+
+        protected virtual void OnNotifyCall(string  e)
+        {
+            var handler = OnNotify;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnExceptionCall(Tuple<string,Exception> tuple)
+        {
+            var handler = OnException;
+            if (handler != null)
+            {
+                handler(this, tuple);
+            }
         }
     }
 }
